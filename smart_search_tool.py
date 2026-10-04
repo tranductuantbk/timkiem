@@ -29,11 +29,10 @@ def export_pdf(df, keyword, location):
     pdf = FPDF()
     pdf.add_page()
     
-    # Lưu ý: Trong môi trường thực tế, cần add_font Unicode (VD: Arial Unicode MS) để hiển thị dấu Tiếng Việt hoàn chỉnh
-    # Dưới đây dùng font Arial mặc định (có thể không hiển thị đủ dấu trong môi trường cơ bản)
+    # Sử dụng font mặc định, loại bỏ các ký tự đặc biệt để tránh lỗi
     pdf.set_font("Arial", size=14)
     
-    # Chuyển đổi tên để in ra PDF không bị lỗi font cơ bản
+    # Làm sạch chuỗi trước khi đưa vào PDF
     safe_keyword = str(keyword).encode('latin-1', 'replace').decode('latin-1')
     safe_location = str(location).encode('latin-1', 'replace').decode('latin-1')
     
@@ -53,9 +52,14 @@ def export_pdf(df, keyword, location):
         pdf.multi_cell(0, 8, txt=f"Chi tiet: {str(row['Chi Tiết']).encode('latin-1', 'replace').decode('latin-1')}")
         pdf.ln(5)
         
-    # Xuất file dạng bytes để Streamlit tải xuống
-    return pdf.output(dest='S').encode('latin-1')
-
+    # --- ĐOẠN ĐƯỢC SỬA LỖI Ở ĐÂY ---
+    result = pdf.output(dest='S')
+    
+    # Kiểm tra xem kết quả trả về là chuỗi (str) hay bytearray/bytes
+    if isinstance(result, str):
+        return result.encode('latin-1')
+    else:
+        return bytes(result)
 # --- LOGIC AI BÓC TÁCH & TÌM KIẾM ---
 def run_ai_search(kw, loc, fb, tt, web):
     # Prompt logic đưa cho AI (Mô phỏng)
