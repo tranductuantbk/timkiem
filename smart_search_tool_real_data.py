@@ -103,7 +103,8 @@ def fetch_real_data(kw, loc, cat, time_val, num_res):
 # --- LOGIC AI BÓC TÁCH ---
 def run_ai_extraction(api_key, raw_text, kw, loc, time_val, req_phone, req_address):
     genai.configure(api_key=api_key)
-    model = genai.GenerativeModel('gemini-1.5-flash')
+    # Cập nhật dùng bản model mới nhất để tránh lỗi 404 cho API Key cũ
+    model = genai.GenerativeModel('gemini-1.5-flash-latest')
     
     prompt = f"""
     Bạn là một chuyên gia Data Scraping. Dưới đây là văn bản thô quét từ internet.
